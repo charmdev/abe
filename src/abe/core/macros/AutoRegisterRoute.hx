@@ -308,8 +308,13 @@ class AutoRegisterRoute {
         'next.error($exec)';
       case TInst(cls, _) if(MacroClassTypes.classExtends(cls.get(), MacroClassTypes.resolveClass("js.node.buffer.Buffer"))):
         'response.send($exec)';
-      case TAnonymous(getToJsonMethodFromAnon(_.get()) => toJson),
-           TInst(getToJsonMethodFromClass(_.get()) => toJson, _) if(toJson != null):
+      case TAnonymous(getToJsonMethodFromAnon(_.get()) => toJson):
+          if(toJson.returnString) {
+            'response.send($exec.${toJson.method}())';
+          } else {
+            'response.json($exec.${toJson.method}())';
+          }
+      case TInst(getToJsonMethodFromClass(_.get()) => toJson, _) if(toJson != null):
           if(toJson.returnString) {
             'response.send($exec.${toJson.method}())';
           } else {
